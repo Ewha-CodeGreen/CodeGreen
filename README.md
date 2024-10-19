@@ -1,5 +1,5 @@
 branch 관리
-- develop/${이름}: 개인 파트 개발 후 해당 브런치에 커밋, 각자 자기 브랜치 만들어주세요! ex) develop/gh
+- develop/${이름}: 개인 파트 개발 후 해당 브랜치에 커밋하기 위한 브랜치, **develop/team 하위에 각자 자기 브랜치 만들어주세요! ex) develop/gh**
 - develop/team: 개인 파트 개발 후 기능/화면 단위로 완성된 것만 해당 브런치에 커밋
 - production: dev branch에서 문제 없는 기능만 해당 브런치에 최종 pr, pr생성자 이외의 사람이 확인 후 merge
 
