@@ -17,10 +17,16 @@
     height: 75px;
     
   }
+
+  .navlist {
+    margin-left: auto;
+  }
+  
   
   header a {
     text-decoration: none;
     color:inherit;
+    margin: 30px;
   }
 
   body {
