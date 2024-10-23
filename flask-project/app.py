@@ -20,7 +20,7 @@ products = {
 
 @application.route("/")
 def index():
-    return render_template("index.html", products=products)
+    return render_template("productdetail.html", products=products)
 
 if __name__ == "__main__":
     application.run(host='0.0.0.0', debug=True)
