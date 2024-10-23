@@ -6,7 +6,6 @@
     <title>상품 상세 정보</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
         }
@@ -15,6 +14,11 @@
             justify-content: space-between;
             background-color: #f8f9fa;
             padding: 10px;
+        }
+        .navbar a {
+            margin-right: 10px;
+            text-decoration: none;
+            color: #000;
         }
         .container {
             display: flex;
@@ -38,7 +42,12 @@
 </head>
 <body>
     <div class="navbar">
-        <h1>네비게이션 바</h1>
+        <h1>마켓</h1>
+        <div>
+            <a href="/">홈</a>
+            <a href="/products">상품 목록</a>
+            <a href="/about">소개</a>
+        </div>
     </div>
     <div class="container">
         <div class="left">
