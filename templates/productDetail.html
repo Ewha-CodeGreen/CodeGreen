@@ -1,8 +1,6 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% extends "index.html" %}
+
+{% block head %}
     <title>상품 상세 정보</title>
     <style>
         body {
@@ -39,39 +37,49 @@
             cursor: pointer;
         }
     </style>
-</head>
-<body>
-    <div class="navbar">
-        <h1>마켓</h1>
-        <div>
-            <a href="/">홈</a>
-            <a href="/products">상품 목록</a>
-            <a href="/about">소개</a>
-        </div>
-    </div>
+{% endblock %}
+
+{% block content %}
     <div class="container">
         <div class="left">
-            <h2>상품 상세정보</h2> 
+            <h2>상품 상세정보</h2>
             <img src="https://via.placeholder.com/150" alt="상품 이미지">
-            <p>{{ products[1]['seller_nickname'] }}님의 상품</p>
-            <p>카테고리: {{ products[1]['category'] }}</p>
-            <p>상품 이름: {{ products[1]['name'] }}</p>
-            <p>판매 가격: {{ products[1]['price'] }} 원</p>
+            <h3>판매자</h3>
+            <p>{{ product['seller_nickname'] }}님의 상품</p>
+
+            <h3>카테고리</h3>
+            <p>{{ product['category'] }}</p>
+
+            <h3>상품 이름</h3>
+            <p>{{ product['name'] }}</p>
+
+            <h3>판매 가격</h3>
+            <p>{{ product['price'] }} 원</p>
         </div>
         <div class="right">
-            <p>직거래 지역: {{ products[1]['location'] }}</p>
-            <p>상품 상태: {{ products[1]['status'] }}</p>
-            <p>별점: {{ products[1]['rating'] }} ⭐</p>
-            <p>재고 수량: {{ products[1]['stock'] }}</p>
-            <p>상세 설명: {{ products[1]['description'] }}</p>
+            <h3>직거래 지역</h3>
+            <p>{{ product['location'] }}</p>
+
+            <h3>상품 상태</h3>
+            <p>{{ product['status'] }}</p>
+
+            <h3>별점</h3>
+            <p>{{ product['rating'] }} ⭐</p>
+
+            <h3>재고 수량</h3>
+            <p>{{ product['stock'] }}</p>
+
+            <h3>상세 설명</h3>
+            <p>{{ product['description'] }}</p>
+
             <h3>리뷰</h3>
             <ul>
-                {% for review in products[1]['reviews'] %}
+                {% for review in product['reviews'] %}
                     <li>{{ review }}</li>
                 {% endfor %}
             </ul>
+
             <button class="button">구매하기</button>
         </div>
     </div>
-</body>
-</html>
+{% endblock content %}
