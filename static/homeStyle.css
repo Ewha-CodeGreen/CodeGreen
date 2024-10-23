@@ -1,128 +1,55 @@
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
- 
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-  header {
-    font-family: sans-serif;
-    background-color: #00462a;
-    color:#f8f8f8;
-    padding: 20px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    height: 75px;
-    
-  }
+body {
+  font-family: Arial, sans-serif;
+}
 
-  .navlist {
-    margin-left: auto;
-  }
-  
-  
-  header a {
-    text-decoration: none;
-    color:inherit;
-    margin: 30px;
-  }
+.welcome h2 {
+  padding-top:150px;
+  text-align: center;
+  font-size: 70px;
+}
 
-  body {
-    
-    margin-bottom: 20px;
-    font-family: sans-serif;
-    background-color: #eeeeee;
-    line-height: 1.8;
-  }
-  
-  .container {
-    display: flex;
-    margin: 0 auto;
-  }
-  
-  .sidebar {
-    width: 25%;
-    background-color: white;
-    color: #36AE92;
-    padding: 20px;
-    min-height: 100vh;
-    text-align: center;
-  }
-  
-  .sidebar .profile img {
-    width: 100px;
-    height: 100px;
-    border-radius: 100%;
-    margin-bottom: 10px;
-    align-content: center;
-  }
-  
-  .sidebar .profile p {
-    font-size: 18px;
-  }
-  
-  .changepsi {
-    margin-top: 20px;
-    padding: 10px;
-    background-color: #36AE92;
-    border: none;
-    color: white;
-    cursor: pointer;
-    width: 100%;
-    border-radius: 5px;
-  }
-  .addpro {
-    margin-top: 20px;
-    padding: 10px;
-    background-color: #00462a;
-    border: none;
-    color: white;
-    cursor: pointer;
-    width: 100%;
-    border-radius: 5px;
-  }
-  
-  .main-board {
-    width: 75%;
-    padding: 15px;
-  }
-  
-  .store-info {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 30px;
-  }
-  
-  .store-info .info-item {
-    background-color: white;
-    padding: 20px;
-    border-radius: 10px;
-    width: 48%;
-    text-align: center;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  }
-  
-  .product-list table {
-    margin-top: 20px;
-    width: 100%;
-    padding: 20px;
-    border-radius: 10px;
-    width: 95%;
-    background-color: white;
-    align-content: center;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  }
-  
-  .product-list table th, .product-list table td {
-    padding: 15px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-  }
-  
-  .product-list table th {
-    background-color: #00462a;
-    color:white;
-  }
-  
+.welcome p {
+  font-size: 20px;
+  text-align: center;
+  padding-top: 65px;
+}
+
+.recent-sales {
+  margin-top: 50px;
+  float: left;
+  margin-left:50px;
+}
+
+.recent-sales h3 {
+  margin-top:150px;
+  font-size: 24px;
+  color:#00462a;
+  text-align:left;
+  margin-bottom: 20px;
+}
+
+.product-list {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.product {
+  border: 1px solid #ddd;
+  padding: 10px;
+  width: 300px;
+  text-align: center;
+}
+
+.product img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  margin-bottom: 10px;
+}
