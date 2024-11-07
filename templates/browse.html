@@ -1,0 +1,78 @@
+{% extends "index.html" %}
+
+{% block title %}Browse Products{% endblock title %}
+
+{% block section %}
+<div class="product-list">
+    <!-- 첫 번째 제품 카드 -->
+    <a href="/product/1" class="product-card">
+        <div class="product-header">
+            <span class="seller-nickname">seller_nickname</span>
+        </div>
+        <img src="path_to_image/gel_pen.jpg" alt="이화그린 펜 (5set)" class="product-image">
+        <div class="product-info">
+            <span class="ewhagreen-label">ewhagreen</span>
+            <h2 class="product-name">이화그린 펜 (5set)</h2>
+            <p class="product-price">₩ 6500</p>
+            <div class="product-status">새상품입니다.</div>
+            <div class="product-rating">★ ★ ★ ★ ★</div>
+        </div>
+    </a>
+
+    <!-- 두 번째 제품 카드 -->
+    <a href="/product/2" class="product-card">
+        <div class="product-header">
+            <span class="seller-nickname">seller_nickname</span>
+        </div>
+        <img src="path_to_image/bear_keychain.jpg" alt="이화 곰돌이 키링" class="product-image">
+        <div class="product-info">
+            <span class="ewhagreen-label">ewhagreen</span>
+            <h2 class="product-name">이화 곰돌이 키링</h2>
+            <p class="product-price">₩ 5000</p>
+            <div class="product-status">gently used, perfect for collectors</div>
+            <div class="product-rating">★ ★ ★ ★ ★</div>
+        </div>
+    </a>
+
+    <!-- 세 번째 제품 카드 -->
+    <a href="/product/3" class="product-card">
+        <div class="product-header">
+            <span class="seller-nickname">seller_nickname</span>
+        </div>
+        <img src="path_to_image/bunny_keychain.jpg" alt="이화 버니 키링" class="product-image">
+        <div class="product-info">
+            <span class="ewhagreen-label">ewhagreen</span>
+            <h2 class="product-name">이화 버니 키링</h2>
+            <p class="product-price">₩ 5500</p>
+            <div class="product-status">새상품입니다.</div>
+            <div class="product-rating">★ ★ ★ ★ ★</div>
+        </div>
+    </a>
+
+    <!-- 네 번째 제품 카드 -->
+    <a href="/product/4" class="product-card">
+        <div class="product-header">
+            <span class="seller-nickname">seller_nickname</span>
+        </div>
+        <img src="path_to_image/bag.jpg" alt="이화 가방" class="product-image">
+        <div class="product-info">
+            <span class="ewhagreen-label">ewhagreen</span>
+            <h2 class="product-name">이화 가방</h2>
+            <p class="product-price">₩ 15000</p>
+            <div class="product-status">새상품입니다.</div>
+            <div class="product-rating">★ ★ ★ ★ ★</div>
+        </div>
+    </a>
+</div>
+
+<!-- 페이지네이션 -->
+<div class="pagination">
+    <a href="?page=previous" class="page-link">Previous</a>
+    <a href="?page=1" class="page-link">1</a>
+    <a href="?page=2" class="page-link">2</a>
+    <a href="?page=3" class="page-link">3</a>
+    <span class="dots">...</span>
+    <a href="?page=10" class="page-link">10</a>
+    <a href="?page=next" class="page-link">Next</a>
+</div>
+{% endblock section %}

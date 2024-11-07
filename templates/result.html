@@ -1,0 +1,38 @@
+{% extends "index.html" %}
+
+{% block section %}
+<h1>상품 등록 결과</h1>
+
+<p>
+    Seller {{ seller }} sells {{ name }} and its category is {{ category }}.
+    The item is
+    {% if status == "like_new" %} likely new!
+    {% endif %}
+    {% if status == "new" %} new!
+    {% endif %}
+    {% if status == "used" %} used!
+    {% endif %}
+</p>
+
+<p>
+    Contact via {{ email }} or {{ phone }} if you are interested! 
+    The address is {{ addr }}.
+</p>
+
+<p>
+    For payment, the credit card is 
+    {% if card == "Y" %} accepted!
+    {% endif %}
+    {% if card == "N" %} NOT accepted!
+    {% endif %}
+</p>
+
+{% if img_path %}
+    <div>
+        <strong>대표 이미지:</strong><br>
+        <img src="{{ img_path }}" alt="Uploaded Image" style="max-width: 300px; max-height: 300px;">
+    </div>
+{% endif %}
+
+<a href="/reg_items">다시 등록하기</a>
+{% endblock section %}

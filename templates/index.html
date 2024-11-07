@@ -1,32 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ewha Market</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='indexStyle.css') }}">
-  {% block head %}{% endblock %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Home{% endblock title %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="{{ url_for('static', filename='main.js') }}" defer></script>
 </head>
 <body>
-  <nav class="navbar">
-    <div class="navbar__logo">
-      <a href="/">Ewha Market</a>
-    </div>
-    <ul class="navbar__menu">
-      <li><a href="/productList">Browse</a></li>
-      <li><a href="/reviewList">Post Reviews</a></li>
-      <li><a href="/mypage">My page</a></li>
-    </ul>
-    <div class="navbar__user">
-      <span class="user__role buyer">buyer</span>
-      <span class="user__nickname">buyer_nickname</span>
-      <div class="user__avatar"></div>
-    </div>
-  </nav>
-
-  <!-- 하위 템플릿이 콘텐츠를 추가할 수 있는 블록 -->
-  {% block content %}
-  {% endblock %}
-
+    <nav class="navbar">
+        <div class="navbar__logo">
+            <a href="">EwhaMarket</a>
+        </div>
+        <ul class="navbar__menu">
+            <li><a href="/browse">Browse</a></li>
+            <li><a href="/reg_items">Sell Products</a></li>
+            <li><a href="/mypage">My page</a></li>
+            <li><a href="/reg_reviews">Register Reviews</a></li>
+        </ul>
+        <a href="#" class="navbar__toggleBtn">
+            <i class="fas fa-bars"></i>
+        </a>
+    </nav>
+    <section>
+        {% block section %}
+        
+        {% endblock section %}
+    </section>
 </body>
 </html>
