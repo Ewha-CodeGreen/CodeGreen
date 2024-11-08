@@ -18,7 +18,6 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
-<<<<<<< HEAD
 # 가상 데이터베이스 예시 데이터
 products = {
     1: {
@@ -70,20 +69,6 @@ users = {
         "nickname": "test_nickname"
     }
 }
-=======
-products = {}
-users = {}
-# users = {
-#     "testuser@example.com": {
-#         "id": "test",
-#         "password": "test",
-#         "nickname": "test",
-#         "role": "seller",
-#         "email": "test@test.com",
-#         "phone": "1234567890"
-#     }
-# }
->>>>>>> origin/develop/team
 
 @app.route("/index")
 def index():
@@ -125,8 +110,6 @@ def sign_up():
 
     return render_template('signUp.html', logged_in=False)
 
-<<<<<<< HEAD
-=======
 @app.route("/productDetail")
 def view_produceDetail():
     # 예시로 product 정보를 설정했습니다.
@@ -149,33 +132,25 @@ def view_produceDetail():
 
     return render_template("productDetailBuyer.html", product=product, logged_in=('id' in session), user=session.get('nickname'))
 
->>>>>>> origin/develop/team
 @app.route("/mypage")
 def view_review():
-    if session['role'] == 'seller':
+    if session['role'] == 'seller': 
         return render_template("mypageSell.html")
     elif session['role'] == 'buyer':
         return render_template("mypageBuy.html")
     else:
         return redirect(url_for("login"))
 
-<<<<<<< HEAD
 
 @app.route("/browse")
 def browse():
-    # Browse 페이지에서 모든 상품 목록을 표시합니다.
-    return render_template("browse.html", products=products.values())
+    # 사용자가 로그인 상태인지 확인하고 역할(role)을 기반으로 다른 페이지를 렌더링합니다.
+    if session.get('role') == 'seller':
+        return render_template("browseSeller.html", products=products.values(), logged_in=('id' in session), user=session.get('nickname'))
+    return render_template("browseBuyer.html", products=products.values(), logged_in=('id' in session), user=session.get('nickname'))
 
-@app.route("/register", methods=["GET", "POST"])
-=======
-@app.route("/productList")
-def product_list():
-    if session['role'] == 'seller':
-        return render_template("productListSeller.html", logged_in=('id' in session), user=session.get('nickname'))
-    return render_template("productListBuyer.html", logged_in=('id' in session), user=session.get('nickname'))
 
 @app.route("/register", methods = ['GET', 'POST'])
->>>>>>> origin/develop/team
 def register_item():
     if request.method == "POST":
 
@@ -218,21 +193,13 @@ def register_item():
 @app.route("/product/<int:product_id>")
 def product_detail(product_id):
     product = products.get(product_id)
-    if product:
-<<<<<<< HEAD
-        return render_template("product_detail.html", product=product)
-    return "Product not found", 404
-
-@app.route("/login", methods=["GET", "POST"])
-=======
-        if session['role'] == 'seller':
+    if session['role'] == 'seller':
             return render_template("productDetailSeller.html", product = product, logged_in=('id' in session), user=session.get('nickname'))
-        else:
+    else:
             return render_template("productDetailBuyer.html", product=product, logged_in=('id' in session), user=session.get('nickname'))
     return "상품을 찾을 수 없습니다.", 404
 
 @app.route("/login", methods=['Get', 'POST'])
->>>>>>> origin/develop/team
 def login():
     if request.method == "POST":
         id = request.form.get("user-id")
