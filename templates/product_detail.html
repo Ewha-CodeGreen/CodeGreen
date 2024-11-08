@@ -1,77 +1,89 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ product['name'] }} - 상품 상세 조회</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='product_detail_style.css') }}">
-</head>
-<body>
+{% extends "index.html" %}
 
-    <header>
-        <h1>Ewha Market</h1>
-        <nav>
-            <a href="#">Browse</a>
-            <a href="#">Sell Products</a>
-            <a href="#">My page</a>
-            <div class="user-info">
-                <span class="badge">buyer</span>
-                buyer_nickname
+{% block head %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='browse.css') }}">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="product-detail">
+    <h1 class="product-detail-title">상품 상세 조회</h1>
+    
+    <!-- 판매자 정보와 상품 이미지 섹션 -->
+    <div class="product-detail-content">
+        <!-- 왼쪽 컬럼 -->
+        <div class="left-column">
+            <div class="seller-info">
+                <span>{{ product.seller_nickname }} 님의 상품</span>
             </div>
-        </nav>
-    </header>
 
-    <main>
-        <section class="product-details">
-            <div class="left-section">
-                <div class="image-container">
-                    <h2>상품 상세 조회</h2>
-<div class="image-container">
-    <h2>상품 상세 조회</h2>
-    <img src="{{ url_for('static', filename='product_detail_image.png') }}" alt="상품 이미지" class="product-image">
+            <div class="image-container">
+                <img src="{{ product.image_url }}" alt="{{ product.name }}" class="product-image-large">
+            </div>
 
+            <div class="product-basic-info">
+                <label>초록템</label>
+                <div class="radio-group">
+                    <label for="green-yes" class="radio-button">
+                        <input type="radio" id="green-yes" name="green" value="Y" checked />
+                        YES
+                    </label>
+                </div>
 
+                <label>카테고리</label>
+                <p>{{ product.category }}</p>
+
+                <label>상품 이름</label>
+                <p>{{ product.name }}</p>
+
+                <label>판매 가격</label>
+                <p>₩ {{ product.price }}</p>
+
+                <label>한 줄 소개</label>
+                <p>{{ product.short_description }}</p>
+            </div>
+        </div>
+
+        <!-- 오른쪽 컬럼: 상세 설명 및 리뷰 -->
+        <div class="right-column">
+            <label>직거래 지역</label>
+            <p>{{ product.location }}</p>
+
+            <label>상품 상태</label>
+            <div class="product-rating">
+                <span class="rating-value">{{ product.rating }}.0</span>
+                {% for i in range(5) %}
+                    <span class="star">{% if i < product.rating %}★{% else %}☆{% endif %}</span>
+                {% endfor %}
+            </div>
+
+            <label>재고 수량</label>
+            <p>{{ product.stock }}</p>
+
+            <label>상세 설명</label>
+            <p>{{ product.description_long }}</p>
+
+            <label>리뷰</label>
+            <div class="review-box">
+                <div class="review-rating">
+                    <span>평점</span>
+                    <span class="rating-stars">★ ★ ★ ★ ★</span>
+                    <span class="rating-value">5.0</span>
+                </div>
+                <div class="review-list">
+                    <div class="review-card">구매자 닉네임 님의 리뷰</div>
+                    <div class="review-card">구매자 닉네임 님의 리뷰</div>
+                    <div class="review-card">더보기 ></div>
+                </div>
+            </div>
+
+            <!-- 구매하기 버튼을 오른쪽 열 기준 가운데 정렬 -->
+            <div class="purchase-button-container">
+                <button class="purchase-button">구매하기</button>
+            </div>
+        </div>
+    </div>
 </div>
-                </div>
-                <div class="product-info">
-                    <p><strong>판매자 닉네임  </strong> {{ product['seller'] }}</p>
-                    <p><strong>초록템  </strong> <strong>{{ 'YES' if product['is_green'] else 'NO' }}</strong></p>
-                    <p><strong>카테고리  </strong> {{ product['category'] }}</p>
-                    <p><strong>상품 이름  </strong> {{ product['name'] }}</p>
-                    <p><strong>판매 가격  </strong> {{ product['price'] }}</p>
-                    <p><strong>한 줄 소개  </strong> {{ product['short_intro'] }}</p>
-                </div>
-            </div>
+{% endblock content %}
 
-            <div class="right-section">
-                <p><strong>거래 지역  </strong> {{ product['region'] }}</p>
-                <p><strong>상품 상태  </strong> <span class="stars">★★★★★</span> {{ product['status'] }}</p>
-                <p><strong>재고 수량  </strong> {{ product['stock'] }}</p>
-                <p><strong>상세 설명  </strong> {{ product['description'] }}</p>
 
-                <div class="reviews">
-                    <h3>리뷰</h3>
-                    <p><strong>평점 </strong> <span class="stars">★★★★</span> 4.0</p>
-                    <div class="review-list">
-                        {% for review in product['reviews'] %}
-                        <div class="review">
-                            <p><strong>{{ review['nickname'] }} 님의 리뷰 </strong></p>
-                            <p>평점 <span class="stars">★{{ review['rating'] }}</span></p>
-                            <p>{{ review['content'] }}</p>
-                        </div>
-                        {% endfor %}
-                    </div>
-                    <div class="review-actions">
-                        <a href="#" class="more-reviews">더보기 ></a>
-                    </div>
-                </div>
-
-                <div class="purchase-section">
-                    <button>구매하기</button>
-                </div>
-            </div>
-        </section>
-    </main>
-
-</body>
-</html>

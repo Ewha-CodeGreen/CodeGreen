@@ -12,7 +12,50 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
-products = {}
+# 가상 데이터베이스 예시 데이터
+products = {
+    1: {
+        "seller_nickname": "seller_nickname",
+        "label": "ewhagreen",
+        "image_url": "path_to_image/gel_pen.jpg",
+        "name": "이화그린 펜 (5set)",
+        "price": 6500,
+        "status": "새상품입니다.",
+        "description": "This is a new set of pens.",
+        "rating": 5
+    },
+    2: {
+        "seller_nickname": "seller_nickname",
+        "label": "ewhagreen",
+        "image_url": "path_to_image/bear_keychain.jpg",
+        "name": "이화 곰돌이 키링",
+        "price": 5000,
+        "status": "gently used, perfect for collectors",
+        "description": "A collectible bear keychain.",
+        "rating": 5
+    },
+    3: {
+        "seller_nickname": "seller_nickname",
+        "label": "ewhagreen",
+        "image_url": "path_to_image/bunny_keychain.jpg",
+        "name": "이화 버니 키링",
+        "price": 5500,
+        "status": "새상품입니다.",
+        "description": "A cute bunny keychain.",
+        "rating": 5
+    },
+    4: {
+        "seller_nickname": "seller_nickname",
+        "label": "ewhagreen",
+        "image_url": "path_to_image/bag.jpg",
+        "name": "이화 가방",
+        "price": 15000,
+        "status": "새상품입니다.",
+        "description": "A spacious and stylish bag.",
+        "rating": 5
+    }
+}
+
 users = {
     "testuser@example.com": {
         "user_id": "testuser",
@@ -52,34 +95,17 @@ def sign_up():
 
     return render_template('signUp.html', logged_in=False)
 
-@app.route("/productDetail")
-def view_produceDetail():
-    # 예시로 product 정보를 설정했습니다.
-    product = {
-        'image': 'product_detail_image.png',
-        'seller_nickname': '이화인',
-        'category': '생활 용품',
-        'name': '물병',
-        'price': 15000,
-        'location': '서울특별시',
-        'status': '새상품',
-        'rating': 4.5,
-        'stock': 10,
-        'description': '이 물병은 매우 튼튼하고 가벼워요!',
-        'reviews': ['좋아요!', '배송 빠르고 상품 좋아요.', '생각보다 크네요.']
-    }
-    return render_template("productDetail.html", product=product)
-    # return render_template("homeSeller.html")
-
 @app.route("/mypage")
 def view_review():
     return render_template("mypageBuy.html")
 
-@app.route("/productList")
-def product_list():
-    return render_template("productList.html")
 
-@app.route("/register", methods = ["GET", "POST"])
+@app.route("/browse")
+def browse():
+    # Browse 페이지에서 모든 상품 목록을 표시합니다.
+    return render_template("browse.html", products=products.values())
+
+@app.route("/register", methods=["GET", "POST"])
 def register_item():
     if request.method == "POST":
 
@@ -112,7 +138,7 @@ def register_item():
             "rating": 0,
         }
 
-        return redirect(url_for("product_detail", product_id=product_id))
+        return render_template("register.html", success=True)
 
     return render_template("register.html")
 
@@ -120,29 +146,8 @@ def register_item():
 def product_detail(product_id):
     product = products.get(product_id)
     if product:
-        return render_template("productDetail.html", product=product)
-    return "상품을 찾을 수 없습니다.", 404
-
-@app.route('/productTest/<int:product_id>')
-def product_detail_Test(product_id):
-    product = {
-        'name': '토끼 키링',
-        'seller': '이화연',
-        'is_green': True,
-        'category': '이화 굿즈',
-        'price': '5,000원',
-        'short_intro': '토끼 키링',
-        'region': '서울 서대문구 이화여대길',
-        'status': '새 제품 - 최상',
-        'stock': 3,
-        'description': '수제 토끼 키링입니다',
-        'reviews': [
-            {'nickname': 'user1', 'rating': 4, 'content': '귀여워요'},
-            {'nickname': 'user2', 'rating': 5, 'content': '마음에 들어요!'}
-        ]
-    }
-    return render_template('product_detail.html', product=product)
-
+        return render_template("product_detail.html", product=product)
+    return "Product not found", 404
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
