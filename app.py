@@ -4,6 +4,12 @@ import os
 app = Flask(__name__)
 app.secret_key = 'super_secret_key'  # 세션 관리를 위한 키 설정
 
+@app.before_request
+def set_default_session_values():
+    # 세션에 'role' 키가 없을 경우 기본값을 'buyer'로 설정
+    if 'role' not in session:
+        session['role'] = 'buyer'
+
 # 업로드할 파일의 저장 경로 설정
 UPLOAD_FOLDER = os.path.join('static', 'uploads')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -12,6 +18,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
+<<<<<<< HEAD
 # 가상 데이터베이스 예시 데이터
 products = {
     1: {
@@ -63,42 +70,96 @@ users = {
         "nickname": "test_nickname"
     }
 }
+=======
+products = {}
+users = {}
+# users = {
+#     "testuser@example.com": {
+#         "id": "test",
+#         "password": "test",
+#         "nickname": "test",
+#         "role": "seller",
+#         "email": "test@test.com",
+#         "phone": "1234567890"
+#     }
+# }
+>>>>>>> origin/develop/team
 
 @app.route("/index")
 def index():
-    return render_template("index.html", logged_in=('user_id' in session), user=session.get('nickname'))
+    return render_template("indexBuyer.html", logged_in=('id' in session), user=session.get('nickname'))
 
-@app.route("/")
+@app.route("/", methods=['GET', 'POST'])
 def home():
-    return render_template("homeBuyer.html", logged_in=('user_id' in session), user=session.get('nickname'))
+    if session['role'] == 'seller':
+        return render_template("homeSeller.html", logged_in=('id' in session), user=session.get('nickname'))
 
-@app.route("/signUp", methods=["GET", "POST"])
+    return render_template("homeBuyer.html", logged_in=('id' in session), user=session.get('nickname'))
+
+@app.route("/signUp", methods=['GET', 'POST'])
 def sign_up():
     if request.method == "POST":
-        user_id = request.form.get("user-id")
+        id = request.form.get("id")
         password = request.form.get("password")
         nickname = request.form.get("nickname")
         email = request.form.get("email")
+        phone = request.form.get("phone")
+        role = request.form.get("role")
 
         # 사용자 정보를 딕셔너리에 저장
         users[email] = {
-            "user_id": user_id,
+            "id": id,
             "password": password,
-            "nickname": nickname
+            "nickname": nickname,
+            "email": email,
+            "phone": phone,
+            "role": role
         }
 
         # 회원가입 후 세션에 저장하여 자동 로그인 처리
-        session['user_id'] = user_id
+        session['id'] = id
         session['nickname'] = nickname
+        session['role'] = role
 
-        return redirect(url_for("home"))
+        return redirect(url_for("home", logged_in=('id' in session), user=session.get('nickname')))
 
     return render_template('signUp.html', logged_in=False)
 
+<<<<<<< HEAD
+=======
+@app.route("/productDetail")
+def view_produceDetail():
+    # 예시로 product 정보를 설정했습니다.
+    product = {
+        'image': 'product_detail_image.png',
+        'seller_nickname': '이화인',
+        'category': '생활 용품',
+        'name': '물병',
+        'price': 15000,
+        'location': '서울특별시',
+        'status': '새상품',
+        'rating': 4.5,
+        'stock': 10,
+        'description': '이 물병은 매우 튼튼하고 가벼워요!',
+        'reviews': ['좋아요!', '배송 빠르고 상품 좋아요.', '생각보다 크네요.']
+    }
+
+    if session['role'] == 'seller':
+        return render_template("productDetailSeller.html", product = product, logged_in=('id' in session), user=session.get('nickname'))
+
+    return render_template("productDetailBuyer.html", product=product, logged_in=('id' in session), user=session.get('nickname'))
+
+>>>>>>> origin/develop/team
 @app.route("/mypage")
 def view_review():
-    return render_template("mypageBuy.html")
+    if session['role'] == 'seller':
+        return render_template("mypageSell.html")
+    elif session['role'] == 'buyer':
+        return render_template("mypageBuy.html")
+    else:
+        return redirect(url_for("login"))
 
+<<<<<<< HEAD
 
 @app.route("/browse")
 def browse():
@@ -106,8 +167,20 @@ def browse():
     return render_template("browse.html", products=products.values())
 
 @app.route("/register", methods=["GET", "POST"])
+=======
+@app.route("/productList")
+def product_list():
+    if session['role'] == 'seller':
+        return render_template("productListSeller.html", logged_in=('id' in session), user=session.get('nickname'))
+    return render_template("productListBuyer.html", logged_in=('id' in session), user=session.get('nickname'))
+
+@app.route("/register", methods = ['GET', 'POST'])
+>>>>>>> origin/develop/team
 def register_item():
     if request.method == "POST":
+
+        if session['role'] == 'buyer':
+            return redirect(url_for("home"))
 
         name = request.form.get("name")
         seller = request.form.get("seller")
@@ -146,42 +219,52 @@ def register_item():
 def product_detail(product_id):
     product = products.get(product_id)
     if product:
+<<<<<<< HEAD
         return render_template("product_detail.html", product=product)
     return "Product not found", 404
 
 @app.route("/login", methods=["GET", "POST"])
+=======
+        if session['role'] == 'seller':
+            return render_template("productDetailSeller.html", product = product, logged_in=('id' in session), user=session.get('nickname'))
+        else:
+            return render_template("productDetailBuyer.html", product=product, logged_in=('id' in session), user=session.get('nickname'))
+    return "상품을 찾을 수 없습니다.", 404
+
+@app.route("/login", methods=['Get', 'POST'])
+>>>>>>> origin/develop/team
 def login():
     if request.method == "POST":
-        user_id = request.form.get("user-id")
+        id = request.form.get("user-id")
         password = request.form.get("password")
 
         # 로그인 유효성 검사
         for user in users.values():
-            if user["user_id"] == user_id and user["password"] == password:
-                session['user_id'] = user_id
+            if user["id"] == id and user["password"] == password:
+                session['id'] = id
                 session['nickname'] = user['nickname']
                 return redirect(url_for("home"))
 
         return render_template("login.html", error="아이디 또는 비밀번호가 잘못되었습니다.", logged_in=False)
     return render_template("login.html", logged_in=False)
 
-@app.route("/findId", methods=["GET", "POST"])
+@app.route("/findId", methods=['GET', 'POST'])
 def find_id():
     if request.method == "POST":
         email = request.form.get("email")
 
         # 이메일로 아이디 찾기
         if email in users:
-            user_id = users[email]["user_id"]
+            user_id = users[email]["id"]
             return render_template("findId.html", user_id=user_id, found=True, logged_in=False)
         else:
-            return render_template("findId.html", error="해당 이메일로 가입된 아이디가 없습니다.", logged_in=False)
+            return render_template("findId.html", error="가입되지 않은 회원입니다.", logged_in=False)
 
     return render_template("findId.html", logged_in=False)
 
 @app.route("/logout")
 def logout():
-    session.pop('user_id', None)
+    session.pop('id', None)
     session.pop('nickname', None)
     return redirect(url_for("home"))
 
@@ -192,7 +275,11 @@ def reviews():
         {"title": "리뷰 제목", "author": "작성자 닉네임", "date": "작성 날짜"},
         {"title": "리뷰 제목", "author": "작성자 닉네임", "date": "작성 날짜"},
     ]
-    return render_template('productreviews.html', reviews=reviews_data)
+
+    if session['role'] == 'seller':
+        return render_template("productreviewsSeller.html", reviews=reviews_data, logged_in=('id' in session), user=session.get('nickname'))
+
+    return render_template('productreviewsBuyer.html', reviews=reviews_data)
 
 if __name__ == "__main__":
     app.run(debug=True)
