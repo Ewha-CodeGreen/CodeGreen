@@ -1,8 +1,10 @@
 from flask import Flask, render_template, request, redirect, url_for, session
+from database import DBhandler
 import os
 
 app = Flask(__name__)
 app.secret_key = 'super_secret_key'  # 세션 관리를 위한 키 설정
+DB = DBhandler()
 
 @app.before_request
 def set_default_session_values():
@@ -144,48 +146,58 @@ def view_review():
 
 @app.route("/browse")
 def browse():
-    # 사용자가 로그인 상태인지 확인하고 역할(role)을 기반으로 다른 페이지를 렌더링합니다.
+    # 사용자가 로그인 상태인지 확인하고 역할(role)을 기반으로 다른 페이지를 렌더링
     if session.get('role') == 'seller':
         return render_template("browseSeller.html", products=products.values(), logged_in=('id' in session), user=session.get('nickname'))
     return render_template("browseBuyer.html", products=products.values(), logged_in=('id' in session), user=session.get('nickname'))
 
 
-@app.route("/register", methods = ['GET', 'POST'])
+@app.route("/register", methods=['GET', 'POST'])
 def register_item():
     if request.method == "POST":
-
-        if session['role'] == 'buyer':
+        # 구매자가 아닌 경우 홈으로 리다이렉트
+        if session.get('role') == 'buyer':
             return redirect(url_for("home"))
 
+        # 폼에서 전송된 데이터 가져오기
         name = request.form.get("name")
-        seller = request.form.get("seller")
-        addr = request.form.get("addr")
+        seller = session.get('nickname')  # session에서 가져온 판매자 닉네임 사용
+        location = request.form.get("location")
         category = request.form.get("category")
         status = request.form.get("status")
-        price = request.form.get("price", type=float)
+        price = float(request.form.get("price").replace('₩', '').replace(',', ''))
         stock = request.form.get("stock", type=int)
+        description_short = request.form.get("description_short")
+        description_long = request.form.get("description_long")
+        green_item = request.form.get("green")
 
         # 이미지 파일 처리
-        image = request.files['image']
+        image = request.files['file']
         image_filename = f"{len(products) + 1}_{image.filename}"
-        image.save(os.path.join(app.config['UPLOAD_FOLDER'], image_filename))
+        image_path = os.path.join(app.config['UPLOAD_FOLDER'], image_filename)
+        image.save(image_path)
 
-        # 상품 딕셔너리에 추가
-        product_id = len(products) + 1
-        products[product_id] = {
+        # 상품 데이터를 딕셔너리에 추가하여 product_data 정의
+        product_data = {
             "name": name,
-            "description": "상품 설명을 여기에 입력하세요",
+            "description_short": description_short,
+            "description_long": description_long,
             "price": price,
             "seller_nickname": seller,
             "category": category,
-            "location": addr,
+            "location": location,
             "status": status,
             "stock": stock,
-            "image": image_filename,  # 이미지 파일 이름 저장
+            "image": image_filename,
+            "green_item": green_item,
             "reviews": [],
             "rating": 0,
         }
 
+        # Firebase에 데이터 삽입 (database 모듈의 DB.insert_item 함수 호출)
+        DB.insert_item(str(len(products) + 1), product_data)
+
+        # 성공 시 등록 화면으로 다시 렌더링
         return render_template("register.html", success=True)
 
     return render_template("register.html")
