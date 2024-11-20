@@ -6,94 +6,36 @@
 
 {% block content %}
 <div class="form-page">
-    <h1>등록할 상품 화면</h1>
-    <form action="/reg_items" method="post" enctype="multipart/form-data">
+    <h1>상품 등록</h1>
+    <form action="/register" method="post" enctype="multipart/form-data">
         <div class="form-container">
-            <!-- 왼쪽 열 -->
             <div class="left-column">
-                <div>
-                    <label for="img">상품 이미지 등록하기</label><br>
-                    <input type="file" name="file" id="img" required /><br><br>
-                </div>
-                <div>
-                    <label>초록템</label><br>
-                    <div class="radio-group">
-                        <label for="green-yes" class="radio-button">
-                            <input type="radio" id="green-yes" name="green" value="Y" checked />
-                            <span>YES</span>
-                        </label>
-                        <label for="green-no" class="radio-button">
-                            <input type="radio" id="green-no" name="green" value="N" />
-                            <span>NO</span>
-                        </label>
-                    </div><br>
-                </div>
-                <div>
-                    <label for="category">카테고리 선택</label><br>
-                    <select id="category" name="category">
-                        <option value="Clothes" selected>Clothes</option>
-                        <option value="Beauty">Beauty</option>
-                        <option value="Books">Books</option>
-                        <option value="Furniture">Furniture</option>
-                        <option value="Electronics">Electronics</option>
-                        <option value="ETC">ETC</option>
-                    </select><br><br>
-                </div>
-                <div>
-                    <label for="name">상품 이름</label><br>
-                    <input type="text" name="name" id="name" required /><br><br>
-                </div>
-                <div>
-                    <label for="price">판매 가격</label><br>
-                    <input type="text" name="price" id="price" required placeholder="₩ 가격을 입력해주세요" /><br><br>
-                </div>
+                <label for="name">상품 이름</label><br>
+                <input type="text" name="name" id="name" required /><br><br>
+
+                <label for="price">가격</label><br>
+                <input type="text" name="price" id="price" required /><br><br>
+
+                <label for="category">카테고리</label><br>
+                <select name="category" id="category" required>
+                    <option value="Clothes">Clothes</option>
+                    <option value="Beauty">Beauty</option>
+                    <option value="Books">Books</option>
+                </select><br><br>
             </div>
-            <!-- 오른쪽 열 -->
             <div class="right-column">
-                <div>
-                    <label for="location">직거래 지역</label><br>
-                    <input type="text" name="location" id="location" required placeholder="위치 추가" /><br><br>
-                </div>
-                <div>
-                    <label for="status">상품 상태</label><br>
-                    <select id="status" name="status">
-                        <option value="new" selected>★ ★ ★ ★ ★</option>
-                        <option value="like_new">★ ★ ★</option>
-                        <option value="used">★</option>
-                    </select><br><br>
-                </div>
-                <div>
-                    <label for="stock">재고 수량</label><br>
-                    <input type="number" name="stock" id="stock" required placeholder="수량을 입력해주세요" /><br><br>
-                </div>
-                <div>
-                    <label for="description_short">한 줄 소개</label><br>
-                    <input type="text" name="description_short" id="description_short" required placeholder="상품을 간단히 소개해주세요" /><br><br>
-                </div>
-                <div>
-                    <label for="description_long">상세 설명</label><br>
-                    <textarea name="description_long" id="description_long" required placeholder="상품에 대해 자세히 작성해주세요"></textarea><br><br>
-                </div>
-                <div>
-                    <input type="submit" value="등록하기" class="submit-button" />
-                </div>
+                <label for="file">상품 이미지</label><br>
+                <input type="file" name="file" id="file" required /><br><br>
+
+                <label for="description_short">간단 설명</label><br>
+                <input type="text" name="description_short" id="description_short" required /><br><br>
+
+                <label for="description_long">상세 설명</label><br>
+                <textarea name="description_long" id="description_long" required></textarea><br><br>
+
+                <input type="submit" value="등록하기" />
             </div>
         </div>
     </form>
 </div>
-
-<script>
-    document.querySelectorAll('.radio-button').forEach(button => {
-        button.addEventListener('click', function() {
-            // Clear all selections
-            document.querySelectorAll('.radio-button').forEach(btn => {
-                btn.style.backgroundColor = '#f0f0f0';
-                btn.style.color = 'black';
-            });
-            // Set the clicked button as selected
-            this.style.backgroundColor = '#00462A';
-            this.style.color = 'white';
-        });
-    });
-</script>
 {% endblock content %}

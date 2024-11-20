@@ -1,264 +1,137 @@
+import logging
 from flask import Flask, render_template, request, redirect, url_for, session
 from database import DBhandler
 import os
 
 app = Flask(__name__)
-app.secret_key = 'super_secret_key'  # 세션 관리를 위한 키 설정
+app.secret_key = 'super_secret_key'
 DB = DBhandler()
 
-@app.before_request
-def set_default_session_values():
-    # 세션에 'role' 키가 없을 경우 기본값을 'buyer'로 설정
-    if 'role' not in session:
-        session['role'] = 'buyer'
+# 디버깅 로그 설정
+logging.basicConfig(level=logging.DEBUG)
 
-# 업로드할 파일의 저장 경로 설정
+# 업로드 폴더 설정
 UPLOAD_FOLDER = os.path.join('static', 'uploads')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
-# 업로드 폴더 생성
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
-# 가상 데이터베이스 예시 데이터
-products = {
-    1: {
-        "seller_nickname": "seller_nickname",
-        "label": "ewhagreen",
-        "image_url": "path_to_image/gel_pen.jpg",
-        "name": "이화그린 펜 (5set)",
-        "price": 6500,
-        "status": "새상품입니다.",
-        "description": "This is a new set of pens.",
-        "rating": 5
-    },
-    2: {
-        "seller_nickname": "seller_nickname",
-        "label": "ewhagreen",
-        "image_url": "path_to_image/bear_keychain.jpg",
-        "name": "이화 곰돌이 키링",
-        "price": 5000,
-        "status": "gently used, perfect for collectors",
-        "description": "A collectible bear keychain.",
-        "rating": 5
-    },
-    3: {
-        "seller_nickname": "seller_nickname",
-        "label": "ewhagreen",
-        "image_url": "path_to_image/bunny_keychain.jpg",
-        "name": "이화 버니 키링",
-        "price": 5500,
-        "status": "새상품입니다.",
-        "description": "A cute bunny keychain.",
-        "rating": 5
-    },
-    4: {
-        "seller_nickname": "seller_nickname",
-        "label": "ewhagreen",
-        "image_url": "path_to_image/bag.jpg",
-        "name": "이화 가방",
-        "price": 15000,
-        "status": "새상품입니다.",
-        "description": "A spacious and stylish bag.",
-        "rating": 5
-    }
-}
+# 기본 세션 값 설정
+@app.before_request
+def set_default_session_values():
+    if 'role' not in session:
+        session['role'] = 'buyer'
 
-users = {
-    "testuser@example.com": {
-        "user_id": "testuser",
-        "password": "password",
-        "nickname": "test_nickname"
-    }
-}
-
-@app.route("/index")
-def index():
-    return render_template("indexBuyer.html", logged_in=('id' in session), user=session.get('nickname'))
-
-@app.route("/", methods=['GET', 'POST'])
+# 홈 페이지
+@app.route("/")
 def home():
-    if session['role'] == 'seller':
-        return render_template("homeSeller.html", logged_in=('id' in session), user=session.get('nickname'))
-
     return render_template("homeBuyer.html", logged_in=('id' in session), user=session.get('nickname'))
 
-@app.route("/signUp", methods=['GET', 'POST'])
-def sign_up():
-    if request.method == "POST":
-        id = request.form.get("id")
-        password = request.form.get("password")
-        nickname = request.form.get("nickname")
-        email = request.form.get("email")
-        phone = request.form.get("phone")
-        role = request.form.get("role")
-
-        # 사용자 정보를 딕셔너리에 저장
-        users[email] = {
-            "id": id,
-            "password": password,
-            "nickname": nickname,
-            "email": email,
-            "phone": phone,
-            "role": role
-        }
-
-        # 회원가입 후 세션에 저장하여 자동 로그인 처리
-        session['id'] = id
-        session['nickname'] = nickname
-        session['role'] = role
-
-        return redirect(url_for("home", logged_in=('id' in session), user=session.get('nickname')))
-
-    return render_template('signUp.html', logged_in=False)
-
-@app.route("/productDetail")
-def view_produceDetail():
-    # 예시로 product 정보를 설정했습니다.
-    product = {
-        'image': 'product_detail_image.png',
-        'seller_nickname': '이화인',
-        'category': '생활 용품',
-        'name': '물병',
-        'price': 15000,
-        'location': '서울특별시',
-        'status': '새상품',
-        'rating': 4.5,
-        'stock': 10,
-        'description': '이 물병은 매우 튼튼하고 가벼워요!',
-        'reviews': ['좋아요!', '배송 빠르고 상품 좋아요.', '생각보다 크네요.']
-    }
-
-    if session['role'] == 'seller':
-        return render_template("productDetailSeller.html", product = product, logged_in=('id' in session), user=session.get('nickname'))
-
-    return render_template("productDetailBuyer.html", product=product, logged_in=('id' in session), user=session.get('nickname'))
-
-@app.route("/mypage")
-def view_review():
-    if session['role'] == 'seller': 
-        return render_template("mypageSell.html")
-    elif session['role'] == 'buyer':
-        return render_template("mypageBuy.html")
-    else:
-        return redirect(url_for("login"))
-
-
-@app.route("/browse")
+# 상품 리스트
+@app.route("/browse", methods=["GET"])
 def browse():
-    # 사용자가 로그인 상태인지 확인하고 역할(role)을 기반으로 다른 페이지를 렌더링
-    if session.get('role') == 'seller':
-        return render_template("browseSeller.html", products=products.values(), logged_in=('id' in session), user=session.get('nickname'))
-    return render_template("browseBuyer.html", products=products.values(), logged_in=('id' in session), user=session.get('nickname'))
+    try:
+        # Firebase에서 데이터 가져오기
+        all_products = DB.get_items()  # 리스트로 반환된 데이터
+        logging.debug(f"DEBUG: All Products from Firebase: {all_products}")
+
+        # 리스트 형식 확인 및 유효 데이터 필터링
+        if isinstance(all_products, list):
+            valid_products = [product for product in all_products if product is not None]
+        else:
+            # 예외 처리: 리스트가 아닌 경우 빈 리스트로 설정
+            valid_products = []
+
+        # 페이지네이션 처리
+        page = request.args.get('page', default=1, type=int)
+        items_per_page = 4
+        total_products = len(valid_products)
+        total_pages = (total_products + items_per_page - 1) // items_per_page
+
+        if page < 1:
+            page = 1
+        elif page > total_pages:
+            page = total_pages
+
+        start_idx = (page - 1) * items_per_page
+        end_idx = start_idx + items_per_page
+        products = valid_products[start_idx:end_idx]
+
+        # 각 제품에 대한 기본 필드 설정
+        for product in products:
+            product["img_path"] = product.get("img_path", "default.jpg")
+
+        return render_template(
+            "browseBuyer.html",
+            products=products,
+            page=page,
+            total_pages=total_pages
+        )
+    except Exception as e:
+        logging.error(f"Error loading products: {e}")
+        return f"Error loading products: {str(e)}", 500
+
+# 상품 상세 페이지
+@app.route("/view_detail/<product_name>/")
+def product_detail(product_name):
+    try:
+        logging.debug(f"Requested product name: {product_name}")
+        all_products = DB.get_items()  # 리스트 반환
+        logging.debug(f"All products: {all_products}")
+
+        # 리스트에서 이름으로 상품 검색
+        product = next((item for item in all_products if item and item.get("name") == product_name), None)
+
+        if not product:
+            logging.error(f"Product with name '{product_name}' not found.")
+            return f"Product '{product_name}' not found", 404
+
+        return render_template(
+            "productDetailBuyer.html",
+            product=product,
+            logged_in=('id' in session),
+            user=session.get('nickname')
+        )
+    except Exception as e:
+        logging.error(f"Error retrieving product details: {e}")
+        return f"An unexpected error occurred: {str(e)}", 500
 
 
-@app.route("/register", methods=['GET', 'POST'])
-def register_item():
+
+# 상품 등록
+@app.route("/register", methods=["GET", "POST"])
+def register():
     if request.method == "POST":
-        # 구매자가 아닌 경우 홈으로 리다이렉트
-        if session.get('role') == 'buyer':
-            return redirect(url_for("home"))
-
-        # 폼에서 전송된 데이터 가져오기
+        # 상품 등록 데이터 수집
         name = request.form.get("name")
-        seller = session.get('nickname')  # session에서 가져온 판매자 닉네임 사용
-        location = request.form.get("location")
-        category = request.form.get("category")
-        status = request.form.get("status")
         price = float(request.form.get("price").replace('₩', '').replace(',', ''))
-        stock = request.form.get("stock", type=int)
+        category = request.form.get("category")
         description_short = request.form.get("description_short")
         description_long = request.form.get("description_long")
-        green_item = request.form.get("green")
 
-        # 이미지 파일 처리
+        # 이미지 처리
         image = request.files['file']
-        image_filename = f"{len(products) + 1}_{image.filename}"
+        image_filename = f"{name}_{image.filename}"
         image_path = os.path.join(app.config['UPLOAD_FOLDER'], image_filename)
         image.save(image_path)
 
-        # 상품 데이터를 딕셔너리에 추가하여 product_data 정의
+        # Firebase에 저장할 데이터 구성
         product_data = {
             "name": name,
+            "price": price,
+            "category": category,
             "description_short": description_short,
             "description_long": description_long,
-            "price": price,
-            "seller_nickname": seller,
-            "category": category,
-            "location": location,
-            "status": status,
-            "stock": stock,
-            "image": image_filename,
-            "green_item": green_item,
-            "reviews": [],
-            "rating": 0,
+            "img_path": image_filename
         }
 
-        # Firebase에 데이터 삽입 (database 모듈의 DB.insert_item 함수 호출)
-        DB.insert_item(str(len(products) + 1), product_data)
-
-        # 성공 시 등록 화면으로 다시 렌더링
-        return render_template("register.html", success=True)
+        # Firebase에 데이터 저장
+        product_id = str(len(DB.get_items()) + 1)
+        if DB.insert_item(product_id, product_data):
+            return redirect(url_for("browse"))
+        return render_template("error.html", message="상품 등록에 실패했습니다.")
 
     return render_template("register.html")
-
-@app.route("/product/<int:product_id>")
-def product_detail(product_id):
-    product = products.get(product_id)
-    if session['role'] == 'seller':
-            return render_template("productDetailSeller.html", product = product, logged_in=('id' in session), user=session.get('nickname'))
-    else:
-            return render_template("productDetailBuyer.html", product=product, logged_in=('id' in session), user=session.get('nickname'))
-    return "상품을 찾을 수 없습니다.", 404
-
-@app.route("/login", methods=['Get', 'POST'])
-def login():
-    if request.method == "POST":
-        id = request.form.get("user-id")
-        password = request.form.get("password")
-
-        # 로그인 유효성 검사
-        for user in users.values():
-            if user["id"] == id and user["password"] == password:
-                session['id'] = id
-                session['nickname'] = user['nickname']
-                return redirect(url_for("home"))
-
-        return render_template("login.html", error="아이디 또는 비밀번호가 잘못되었습니다.", logged_in=False)
-    return render_template("login.html", logged_in=False)
-
-@app.route("/findId", methods=['GET', 'POST'])
-def find_id():
-    if request.method == "POST":
-        email = request.form.get("email")
-
-        # 이메일로 아이디 찾기
-        if email in users:
-            user_id = users[email]["id"]
-            return render_template("findId.html", user_id=user_id, found=True, logged_in=False)
-        else:
-            return render_template("findId.html", error="가입되지 않은 회원입니다.", logged_in=False)
-
-    return render_template("findId.html", logged_in=False)
-
-@app.route("/logout")
-def logout():
-    session.pop('id', None)
-    session.pop('nickname', None)
-    return redirect(url_for("home"))
-
-@app.route('/review')
-def reviews():
-    reviews_data = [
-        {"title": "리뷰 제목", "author": "작성자 닉네임", "date": "작성 날짜"},
-        {"title": "리뷰 제목", "author": "작성자 닉네임", "date": "작성 날짜"},
-        {"title": "리뷰 제목", "author": "작성자 닉네임", "date": "작성 날짜"},
-    ]
-
-    if session['role'] == 'seller':
-        return render_template("productreviewsSeller.html", reviews=reviews_data, logged_in=('id' in session), user=session.get('nickname'))
-
-    return render_template('productreviewsBuyer.html', reviews=reviews_data)
 
 if __name__ == "__main__":
     app.run(debug=True)

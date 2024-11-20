@@ -1,82 +1,37 @@
 {% extends "indexBuyer.html" %}
 
-{% block head %}
-  <link rel="stylesheet" href="{{ url_for('static', filename='browseStyle.css') }}">
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet">
-{% endblock %}
-
 {% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='browseStyle.css') }}">
+
 <div class="product-list">
-    <!-- 첫 번째 제품 카드 -->
-    <a href="/product/1" class="product-card">
-        <div class="product-header">
-            <span class="seller-nickname">seller_nickname</span>
+    <h1>상품 리스트</h1>
+    {% if products and products|length > 0 %}
+    <div class="product-grid">
+        {% for product in products %}
+        <!-- 상품 상세 페이지로 연결 -->
+        <div class="product-card" 
+             onclick="location.href=`{{ url_for('product_detail', product_name=product.name) }}`" 
+             style="cursor: pointer;">
+            <img src="{{ url_for('static', filename='uploads/' + product.img_path) }}" alt="상품 이미지">
+            <h3>{{ product.name }}</h3>
+            <p class="price">₩ {{ product.price }}</p>
+            <p class="description">{{ product.description_short }}</p>
         </div>
-        <img src="path_to_image/gel_pen.jpg" alt="이화그린 펜 (5set)" class="product-image">
-        <div class="product-info">
-            <span class="ewhagreen-label">ewhagreen</span>
-            <h2 class="product-name">이화그린 펜 (5set)</h2>
-            <p class="product-price">₩ 6500</p>
-            <div class="product-status">새상품입니다.</div>
-            <div class="product-rating">★ ★ ★ ★ ★</div>
-        </div>
-    </a>
+        {% endfor %}
+    </div>
 
-    <!-- 두 번째 제품 카드 -->
-    <a href="/product/2" class="product-card">
-        <div class="product-header">
-            <span class="seller-nickname">seller_nickname</span>
-        </div>
-        <img src="path_to_image/bear_keychain.jpg" alt="이화 곰돌이 키링" class="product-image">
-        <div class="product-info">
-            <span class="ewhagreen-label">ewhagreen</span>
-            <h2 class="product-name">이화 곰돌이 키링</h2>
-            <p class="product-price">₩ 5000</p>
-            <div class="product-status">gently used, perfect for collectors</div>
-            <div class="product-rating">★ ★ ★ ★ ★</div>
-        </div>
-    </a>
-
-    <!-- 세 번째 제품 카드 -->
-    <a href="/product/3" class="product-card">
-        <div class="product-header">
-            <span class="seller-nickname">seller_nickname</span>
-        </div>
-        <img src="path_to_image/bunny_keychain.jpg" alt="이화 버니 키링" class="product-image">
-        <div class="product-info">
-            <span class="ewhagreen-label">ewhagreen</span>
-            <h2 class="product-name">이화 버니 키링</h2>
-            <p class="product-price">₩ 5500</p>
-            <div class="product-status">새상품입니다.</div>
-            <div class="product-rating">★ ★ ★ ★ ★</div>
-        </div>
-    </a>
-
-    <!-- 네 번째 제품 카드 -->
-    <a href="/product/4" class="product-card">
-        <div class="product-header">
-            <span class="seller-nickname">seller_nickname</span>
-        </div>
-        <img src="path_to_image/bag.jpg" alt="이화 가방" class="product-image">
-        <div class="product-info">
-            <span class="ewhagreen-label">ewhagreen</span>
-            <h2 class="product-name">이화 가방</h2>
-            <p class="product-price">₩ 15000</p>
-            <div class="product-status">새상품입니다.</div>
-            <div class="product-rating">★ ★ ★ ★ ★</div>
-        </div>
-    </a>
-</div>
-
-<!-- 페이지네이션 -->
-<div class="pagination">
-    <a href="?page=previous" class="page-link">Previous</a>
-    <a href="?page=1" class="page-link">1</a>
-    <a href="?page=2" class="page-link">2</a>
-    <a href="?page=3" class="page-link">3</a>
-    <span class="dots">...</span>
-    <a href="?page=10" class="page-link">10</a>
-    <a href="?page=next" class="page-link">Next</a>
+    <!-- 페이지네이션 -->
+    <div class="pagination">
+        {% if page > 1 %}
+        <a href="{{ url_for('browse', page=page-1) }}" class="pagination-button">이전</a>
+        {% endif %}
+        <span>페이지 {{ page }} / {{ total_pages }}</span>
+        {% if page < total_pages %}
+        <a href="{{ url_for('browse', page=page+1) }}" class="pagination-button">다음</a>
+        {% endif %}
+    </div>
+    {% else %}
+    <p>현재 등록된 상품이 없습니다. 상품이 등록되면 여기에 표시됩니다.</p>
+    {% endif %}
 </div>
 {% endblock content %}
-
