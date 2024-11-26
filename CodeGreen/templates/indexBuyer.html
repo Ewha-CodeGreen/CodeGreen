@@ -19,12 +19,12 @@
     </div>
     <ul class="navbar__menu">
       <li><a href="/browse">Browse</a></li>
-      <li><a href="/register">Sell Products</a></li>
+      <li><a href="/review">Post Reviews</a></li>
       <li><a href="/mypage">My page</a></li>
     </ul>
     <div class="navbar__user">
       {% if logged_in %}
-        <span class="user__role buyer">seller</span>
+        <span class="user__role buyer">buyer</span>
         <span class="user__nickname">{{ user }}</span>
         <div class="user__avatar"></div>
         <a href="/logout" class="logout-btn">Logout</a>
