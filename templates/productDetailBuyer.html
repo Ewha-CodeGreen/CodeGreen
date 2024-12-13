@@ -2,16 +2,16 @@
 
 {% block head %}
     <link rel="stylesheet" href="{{ url_for('static', filename='productDetailStyle.css') }}">
-{% endblock %}
+{% endblock head %}
 
 {% block content %}
 <div class="product-detail">
     <div class="actions">
         <button onclick="location.href='/service/browse'">돌아가기</button>
     </div>
-    <h1>{{ product.get('name', '상품 이름 없음') }}</h1> 
+    <h1>{{ product.get('name', '상품 이름 없음') }}</h1>
     <div class="product-container">
-        <img src="{{ url_for('static', filename='uploads/' + product.get('img_path', 'default.jpg')) }}" alt="상품 이미지">
+        <img src="{{ product.get('img_url', url_for('static', filename='uploads/default.jpg')) }}" alt="상품 이미지">
         <div class="product-info">
             <p><strong>판매자:</strong> {{ user if user else '정보 없음' }}</p>
             <p><strong>가격:</strong> ₩ {{ product.get('price', '정보 없음') | int }}</p>
@@ -24,89 +24,71 @@
         </div>
     </div>
     <div class="actions">
-
-
-            <button>구매하기</button>
-             
+        <button>구매하기</button>
         <button onclick="location.href='/service/browse'">돌아가기</button>
-
-
-        <button onclick="location.href='/reviews/register/{{name}}'">리뷰 작성</button>
-{#        <button onclick="location.href='/reviews/register/{{ product_id }}'">리뷰 작성</button>#}
+        <button onclick="location.href='/reviews/register/{{ product.get("name", "상품 이름 없음") }}'">리뷰 작성</button>
         <button class="like-button">
             <i class="fa fa-heart" id="heart"></i> 좋아요
         </button>
     </div>
 </div>
-
-
 {% endblock content %}
-
 
 {% block scripts %}
 <script>
-        $(document).ready(function() {
-        
+    $(document).ready(function() {
         showHeart();
     });
-
 
     function showHeart() {
         $.ajax({
             type: 'GET',
-            url: '/show_heart/{{name}}/',  
+            url: `/show_heart/{{ product.get('name', '상품 이름 없음') }}/`,
             data: {},
             success: function(response) {
-                let my_heart = response['my_heart'];  
+                let my_heart = response['my_heart'];
                 if (my_heart && my_heart['interested'] === 'Y') {
-                    
                     $("#heart").css("color", "red");
-                    $("#heart").attr("onclick", "unlike()");  
+                    $("#heart").attr("onclick", "unlike()");
                 } else {
-                    
                     $("#heart").css("color", "grey");
-                    $("#heart").attr("onclick", "like()");  
+                    $("#heart").attr("onclick", "like()");
                 }
             },
             error: function(request, status, error) {
-                console.error("AJAX error:", error);  
+                console.error("AJAX error:", error);
             }
         });
     }
-
 
     function like() {
         $.ajax({
             type: 'POST',
-            url: '/like/{{name}}/',  
-            data: { interested: 'Y' },  
+            url: `/like/{{ product.get('name', '상품 이름 없음') }}/`,
+            data: { interested: 'Y' },
             success: function(response) {
-                alert(response['msg']);  
-                window.location.reload();  
+                alert(response['msg']);
+                window.location.reload();
             },
             error: function(request, status, error) {
-                console.error("AJAX error:", error);  
+                console.error("AJAX error:", error);
             }
         });
     }
-
 
     function unlike() {
         $.ajax({
             type: 'POST',
-            url: '/unlike/{{name}}/',  
-            data: { interested: 'N' },  
+            url: `/unlike/{{ product.get('name', '상품 이름 없음') }}/`,
+            data: { interested: 'N' },
             success: function(response) {
-                alert(response['msg']);  
-                window.location.reload();  
+                alert(response['msg']);
+                window.location.reload();
             },
             error: function(request, status, error) {
-                console.error("AJAX error:", error);  
+                console.error("AJAX error:", error);
             }
         });
     }
 </script>
-{% endblock %}
-
-{% endblock content %}
-
+{% endblock scripts %}

@@ -378,29 +378,26 @@ def product_detail(product_name):
 
         if not product:
             logging.error(f"Product with name '{product_name}' not found.")
-            # return f"Product '{product_name}' not found", 404
-
             return render_template(
                 "productDetailBuyer.html",
-                product=product,
+                product=None,  # 상품이 없을 경우 None 전달
                 logged_in=('id' in session),
                 user=session.get('nickname')
             )
+
         # 템플릿 렌더링: 역할에 따라 다른 템플릿 선택
         if 'id' in session:
             if session['role'] == 'seller':
                 return render_template(
                     "productDetailSeller.html",  # 판매자용 템플릿
-                    product=product,
-                    name=product_name,
+                    product=product,  # 딕셔너리로 전달
                     logged_in=True,
                     user=session.get('nickname')
                 )
             elif session['role'] == 'buyer':
                 return render_template(
                     "productDetailBuyer.html",  # 구매자용 템플릿
-                    product=product_name,
-                    name=product_name,
+                    product=product,  # 딕셔너리로 전달
                     logged_in=True,
                     user=session.get('nickname')
                 )
@@ -408,8 +405,7 @@ def product_detail(product_name):
             # 비로그인 사용자는 기본적으로 구매자용 템플릿 사용
             return render_template(
                 "productDetailBuyer.html",
-                product=product,
-                name=product_name,
+                product=product,  # 딕셔너리로 전달
                 logged_in=False,
                 user=None
             )
@@ -466,6 +462,27 @@ def view_review():
     else:
         return redirect(url_for("page_login"))
 
+# @app.route("/mypage/buyer")
+# def mypage_buyer():
+#     if 'id' not in session or session.get('role') != 'buyer':
+#         return redirect(url_for('login_user'))
+#
+#     buyer_id = session['id']
+#     orders = DB.get_orders_by_user(buyer_id, role='buyer')  # 구매자 주문 데이터 가져오기
+#     total_orders = len(orders)  # 총 주문 수 계산
+#
+#     reviews = DB.get_reviews_by_buyer_id(buyer_id)
+#     total_reviews = len(reviews)
+#
+#     return render_template(
+#         "mypageBuy.html",
+#         orders=orders,
+#         total_orders=total_orders,
+#         total_reviews=total_reviews,
+#         logged_in=True,
+#         user=session.get('nickname')
+#     )
+
 @app.route("/mypage/buyer")
 def mypage_buyer():
     if 'id' not in session or session.get('role') != 'buyer':
@@ -475,13 +492,17 @@ def mypage_buyer():
     orders = DB.get_orders_by_user(buyer_id, role='buyer')  # 구매자 주문 데이터 가져오기
     total_orders = len(orders)  # 총 주문 수 계산
 
-    reviews = DB.get_reviews_by_buyer_id(buyer_id)
+    reviews = DB.get_reviews_by_buyer_id(buyer_id)  # 리뷰 데이터 가져오기
     total_reviews = len(reviews)
+
+    logging.debug(f"Orders: {orders}")
+    logging.debug(f"Reviews: {reviews}")
 
     return render_template(
         "mypageBuy.html",
         orders=orders,
         total_orders=total_orders,
+        reviews=reviews,  # 리뷰 데이터 전달
         total_reviews=total_reviews,
         logged_in=True,
         user=session.get('nickname')
@@ -553,12 +574,15 @@ def service_browse():
         # Firebase에서 데이터 가져오기
         all_products = DB.get_items()  # Firebase에서 전체 상품 리스트 반환
         logging.debug(f"DEBUG: All Products from Firebase: {all_products}")
+        print(all_products)
 
         # 유효한 데이터만 필터링
         if isinstance(all_products, list):
             valid_products = [product for product in all_products if product is not None]
         else:
             valid_products = []
+
+        print(valid_products)
 
         # `green_view` 처리 (URL 파라미터 기반)
         green_view = request.args.get('green_view', default="false").lower() == "true"
@@ -632,6 +656,7 @@ def service_browse():
         #             user=g.user['nickname']
         #         )
         else:
+            print(products)
             return render_template(
                 "browseBuyer.html",
                 products=products,
@@ -843,7 +868,7 @@ def service_reviews():
 @app.route('/myreviews')
 def myreview_list():
     try:
-        reviews = DB.get_review_by_nickname(session.get('nickname'))
+        reviews = DB.get_reviews_by_buyer_id(session.get('id'))
         if reviews is None:
             reviews = []
         elif isinstance(reviews, dict):
@@ -865,10 +890,7 @@ def myreview_list():
         end_idx = start_idx + reviews_per_page
         paginated_reviews = valid_reviews[start_idx:end_idx]
 
-        # Default handling for missing fields
-        for review in paginated_reviews:
-            review["img_path"] = review.get("img_path", "default.jpg")
-
+        print(valid_reviews)
         return render_template(
             "myreviewList.html",
             reviews=paginated_reviews,

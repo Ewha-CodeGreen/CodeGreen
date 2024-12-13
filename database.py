@@ -251,12 +251,37 @@ class DBhandler:
             print(f"Failed to fetch orders for {role} {user_id}: {e}")
             return []
     
+    # def get_reviews_by_buyer_id(self, buyer_id):
+    #     try:
+    #         reviews = self.db.child("reviews").get().val()
+    #         if not reviews:
+    #             return []
+    #         return [review for review in reviews.values() if review.get("buyer_id") == buyer_id]
+    #     except Exception as e:
+    #         print(f"Error retrieving reviews for buyer {buyer_id}: {e}")
+    #         return []
+
     def get_reviews_by_buyer_id(self, buyer_id):
         try:
             reviews = self.db.child("reviews").get().val()
+
+            # 데이터가 None 또는 비어 있을 경우 빈 리스트 반환
             if not reviews:
                 return []
-            return [review for review in reviews.values() if review.get("buyer_id") == buyer_id]
+
+            # `reviews`가 리스트인 경우
+            if isinstance(reviews, list):
+                return [review for review in reviews if isinstance(review, dict) and review.get("buyer_id") == buyer_id]
+
+            # `reviews`가 딕셔너리인 경우
+            if isinstance(reviews, dict):
+                return [review for review in reviews.values() if
+                        isinstance(review, dict) and review.get("buyer_id") == buyer_id]
+
+            # 예상하지 못한 데이터 형식
+            print(f"Unexpected data format for reviews: {type(reviews)}")
+            return []
+
         except Exception as e:
             print(f"Error retrieving reviews for buyer {buyer_id}: {e}")
             return []
